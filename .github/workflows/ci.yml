@@ -38,7 +38,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: module
-          path: C:\Users\runneradmin\Documents\PowerShell\Modules\AnyPackage.Pkgx\
+          path: ~/.local/share/powershell/Modules/AnyPackage.Pkgx
 
       - name: Install pkgx
         run: curl -Ssf https://pkgx.sh | sh
