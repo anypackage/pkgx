@@ -18,7 +18,7 @@
             Providers = 'pkgx'
         }
         PSData = @{
-            Tags = @('AnyPackage', 'Provider', 'pkgx', 'Windows')
+            Tags = @('AnyPackage', 'Provider', 'pkgx', 'Linux', 'MacOS')
             LicenseUri = 'https://github.com/anypackage/pkgx/blob/main/LICENSE'
             ProjectUri = 'https://github.com/anypackage/pkgx'
         }
