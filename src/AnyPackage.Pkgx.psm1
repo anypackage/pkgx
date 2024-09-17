@@ -6,7 +6,22 @@ using module AnyPackage
 using namespace AnyPackage.Provider
 
 [PackageProvider('pkgx')]
-class PkgxProvider : PackageProvider, IInstallPackage, IUninstallPackage {
+class PkgxProvider : PackageProvider, IFindPackage, IInstallPackage, IUninstallPackage {
+    [void] FindPackage([PackageRequest] $request) {
+        if ($request.Name -eq '*') {
+            $request.WriteVerbose('pkgx does not support wildcards.')
+            return
+        }
+
+        pkgx mash pkgx/pantry-inventory $request.Name |
+            ForEach-Object {
+                if ($request.IsMatch([PackageVersion]$_)) {
+                    $package = [PackageInfo]::new($request.Name, $_, $request.ProviderInfo)
+                    $request.WritePackage($package)
+                }
+            }
+    }
+
     [void] InstallPackage([PackageRequest] $request) {
         if ($request.Version -and $request.Version.MinVersion -ne $request.Version.MaxVersion) {
             throw 'pkgx does not support version ranges, use only exact versions.'
