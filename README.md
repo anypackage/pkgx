@@ -11,7 +11,8 @@
 [build-site]: https://github.com/anypackage/pkgx/actions/workflows/ci.yml
 [cf-site]: https://www.codefactor.io/repository/github/anypackage/pkgx
 
-`AnyPackage.Pkgx` is an AnyPackage provider that facilitates installing `pkgx` packages.
+`AnyPackage.Pkgx` is an AnyPackage provider that facilitates installing `pkgx`
+packages.
 
 ## Requirements
 
@@ -20,13 +21,13 @@ instructions.
 
 ## Install AnyPackage.Pkgx
 
-```PowerShell
+```powershell
 Install-PSResource AnyPackage.Pkgx
 ```
 
 ## Import AnyPackage.Pkgx
 
-```PowerShell
+```powershell
 Import-Module AnyPackage.Pkgx
 ```
 
@@ -34,12 +35,12 @@ Import-Module AnyPackage.Pkgx
 
 ### Install a package
 
-```PowerShell
+```powershell
 Install-Package -Name node
 ```
 
 ### Uninstall a package
 
-```PowerShell
+```powershell
 Uninstall-Package -Name node
 ```
