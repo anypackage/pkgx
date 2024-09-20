@@ -1,4 +1,4 @@
-﻿# Copyright (c) Thomas Nieto - All Rights Reserved
+# Copyright (c) Thomas Nieto - All Rights Reserved
 # You may use, distribute and modify this code under the
 # terms of the MIT license.
 
@@ -52,20 +52,11 @@ class PkgxProvider : PackageProvider, IFindPackage, IInstallPackage, IUninstallP
     }
 
     [void] UninstallPackage([PackageRequest] $request) {
-        if ($request.Version -and $request.Version.MinVersion -ne $request.Version.MaxVersion) {
-            throw 'pkgx does not support version ranges, use only exact versions.'
-        }
-        elseif ($request.Version) {
-            $version = $request.Version.MinVersion
-            $name = '{0}@{1}' -f $request.Name, $version
-        } elseif ($request.Name.Contains('@')) {
-            $name, $version = $request.Name -split '@'
-        } else {
-            $version = $null
-            $name = $request.Name
+        if ((-not $request.Package -and $request.Version) -or $request.Name.Contains('@')) {
+            throw 'pkgx does not support specifying version.'
         }
 
-        $output = pkgx uninstall $name 2>&1 |
+        $output = pkgx uninstall $request.Name 2>&1 |
             ForEach-Object {
                 $request.WriteVerbose($_)
                 $_
@@ -73,7 +64,7 @@ class PkgxProvider : PackageProvider, IFindPackage, IInstallPackage, IUninstallP
 
         foreach ($line in $output) {
             if ($line -match '^uninstalled:') {
-                $package = [PackageInfo]::new($name, $version, $request.ProviderInfo)
+                $package = [PackageInfo]::new($request.Name, $request.Package.Version, $request.ProviderInfo)
                 $request.WritePackage($package)
                 break
             }
