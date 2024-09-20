@@ -22,6 +22,6 @@ and this project adheres to [Semantic Versioning][semver].
 
 - Initial release
 
-[Unreleased]: https://github.com/anypackage/scoop/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/anypackage/scoop/releases/tag/v0.2.0
-[0.1.0]: https://github.com/anypackage/scoop/releases/tag/v0.1.0
+[Unreleased]: https://github.com/anypackage/pkgx/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/anypackage/pkgx/releases/tag/v0.2.0
+[0.1.0]: https://github.com/anypackage/pkgx/releases/tag/v0.1.0
