@@ -33,6 +33,18 @@ Import-Module AnyPackage.Pkgx
 
 ## Sample usages
 
+### Find a package
+
+```powershell
+Find-Package -Name node
+```
+
+### Get installed packages
+
+```powershell
+Get-Package -Name node
+```
+
 ### Install a package
 
 ```powershell
