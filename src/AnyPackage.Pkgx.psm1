@@ -25,8 +25,7 @@ class PkgxProvider : PackageProvider, IFindPackage, IInstallPackage, IUninstallP
     [void] InstallPackage([PackageRequest] $request) {
         if ($request.Version -and $request.Version.MinVersion -ne $request.Version.MaxVersion) {
             throw 'pkgx does not support version ranges, use only exact versions.'
-        }
-        elseif ($request.Version) {
+        } elseif ($request.Version) {
             $version = $request.Version.MinVersion
             $name = '{0}@{1}' -f $request.Name, $version
         } elseif ($request.Name.Contains('@')) {
