@@ -1,4 +1,4 @@
-# Copyright (c) Thomas Nieto - All Rights Reserved
+﻿# Copyright (c) Thomas Nieto - All Rights Reserved
 # You may use, distribute and modify this code under the
 # terms of the MIT license.
 
@@ -6,7 +6,7 @@ using module AnyPackage
 using namespace AnyPackage.Provider
 
 [PackageProvider('pkgx')]
-class PkgxProvider : PackageProvider, IFindPackage, IInstallPackage, IUninstallPackage {
+class PkgxProvider : PackageProvider, IFindPackage, IGetPackage, IInstallPackage, IUninstallPackage {
     [void] FindPackage([PackageRequest] $request) {
         if ($request.Name -eq '*') {
             $request.WriteVerbose('pkgx does not support wildcards.')
@@ -20,6 +20,40 @@ class PkgxProvider : PackageProvider, IFindPackage, IInstallPackage, IUninstallP
                     $request.WritePackage($package)
                 }
             }
+    }
+
+    [void] GetPackage([PackageRequest] $request) {
+        $pattern = 'exec pkgx \+(?<name>[\w\./]+)((?:[@^])(?<version>[\d\.]+))?'
+        $packages = Select-String -Path ./.local/bin/* -Pattern $pattern |
+            Select-Object -ExpandProperty Matches -Unique
+        
+        $basePath = '~/.pkgx'
+
+        foreach ($package in $packages) {
+            $name = $package.Groups['name']
+
+            if ($package.Groups['version'].Success) {
+                $versionBin = $package.Groups['version'].Value
+                $versionPath = Join-Path -Path $basePath -ChildPath "$name/v$versionBin"
+            } else {
+                $versionPath = Join-Path -Path $basePath -ChildPath "$name/v*"
+            }
+
+            $versionDirectory = Get-Item -LiteralPath $versionPath
+
+            if ($versionDirectory.Target) {
+                $resolvedVersion = $versionDirectory.Target
+            } else {
+                $resolvedVersion = $versionDirectory.Name
+            }
+
+            $version = $resolvedVersion -replace 'v', ''
+            
+            if ($request.IsMatch($name, $version)) {
+                $packageInfo = [PackageInfo]::new($name, $version, $request.ProviderInfo)
+                $request.WritePackage($packageInfo)
+            }
+        }
     }
 
     [void] InstallPackage([PackageRequest] $request) {
