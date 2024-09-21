@@ -1,4 +1,4 @@
-# Copyright (c) Thomas Nieto - All Rights Reserved
+﻿# Copyright (c) Thomas Nieto - All Rights Reserved
 # You may use, distribute and modify this code under the
 # terms of the MIT license.
 
@@ -24,7 +24,7 @@ class PkgxProvider : PackageProvider, IFindPackage, IGetPackage, IInstallPackage
 
     [void] GetPackage([PackageRequest] $request) {
         $pattern = 'exec pkgx \+(?<name>[\w\./]+)((?:[@^])(?<version>[\d\.]+))?'
-        $packages = Select-String -Path ./.local/bin/* -Pattern $pattern |
+        $packages = Select-String -Path ~/.local/bin/* -Pattern $pattern |
             Select-Object -ExpandProperty Matches -Unique
 
         $basePath = '~/.pkgx'
@@ -64,7 +64,17 @@ class PkgxProvider : PackageProvider, IFindPackage, IGetPackage, IInstallPackage
 
     [void] InstallPackage([PackageRequest] $request) {
         if ($request.Version -and $request.Version.MinVersion -ne $request.Version.MaxVersion) {
-            throw 'pkgx does not support version ranges, use only exact versions.'
+            $findPackageParams = @{
+                Name     = $request.Name
+                Version  = $request.Version
+                Provider = $request.ProviderInfo.FullName
+            }
+
+            $version = Find-Package @findPackageParams |
+                Sort-Object -Property Version -Descending |
+                Select-Object -ExpandProperty Version -First 1
+
+            $name = '{0}@{1}' -f $request.Name, $version
         } elseif ($request.Version) {
             $version = $request.Version.MinVersion
             $name = '{0}@{1}' -f $request.Name, $version
