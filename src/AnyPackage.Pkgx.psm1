@@ -1,4 +1,4 @@
-﻿# Copyright (c) Thomas Nieto - All Rights Reserved
+# Copyright (c) Thomas Nieto - All Rights Reserved
 # You may use, distribute and modify this code under the
 # terms of the MIT license.
 
@@ -37,20 +37,26 @@ class PkgxProvider : PackageProvider, IFindPackage, IGetPackage, IInstallPackage
                 $versionPath = Join-Path -Path $basePath -ChildPath "$name/v$versionBin"
             } else {
                 $versionPath = Join-Path -Path $basePath -ChildPath "$name/v*"
+                $versionBin = $null
             }
 
-            $versionDirectory = Get-Item -LiteralPath $versionPath
+            $versionDirectory = Get-Item -LiteralPath $versionPath -ErrorAction SilentlyContinue
 
-            if ($versionDirectory.Target) {
-                $resolvedVersion = $versionDirectory.Target
+            if (-not $versionDirectory -and $versionBin) {
+                $version = $versionBin
+            } elseif (-not $versionDirectory) {
+                $version = $null
+            } elseif ($versionDirectory.Target) {
+                $version = $versionDirectory.Target -replace 'v', ''
             } else {
-                $resolvedVersion = $versionDirectory.Name
+                $version = $versionDirectory.Name -replace 'v', ''
             }
 
-            $version = $resolvedVersion -replace 'v', ''
-
-            if ($request.IsMatch($name, $version)) {
+            if ($version -and $request.IsMatch($name, $version)) {
                 $packageInfo = [PackageInfo]::new($name, $version, $request.ProviderInfo)
+                $request.WritePackage($packageInfo)
+            } elseif ($request.IsMatch($name)) {
+                $packageInfo = [PackageInfo]::new($name, $request.ProviderInfo)
                 $request.WritePackage($packageInfo)
             }
         }
