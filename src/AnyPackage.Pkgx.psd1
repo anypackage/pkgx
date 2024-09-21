@@ -1,6 +1,6 @@
 @{
     RootModule = 'AnyPackage.Pkgx.psm1'
-    ModuleVersion = '0.2.0'
+    ModuleVersion = '0.3.0'
     CompatiblePSEditions = @('Core')
     GUID = 'a59c17ca-0cf1-4efc-b1b6-41f3b21c586e'
     Author = 'Thomas Nieto'
