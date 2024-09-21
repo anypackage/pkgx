@@ -26,7 +26,7 @@ class PkgxProvider : PackageProvider, IFindPackage, IGetPackage, IInstallPackage
         $pattern = 'exec pkgx \+(?<name>[\w\./]+)((?:[@^])(?<version>[\d\.]+))?'
         $packages = Select-String -Path ./.local/bin/* -Pattern $pattern |
             Select-Object -ExpandProperty Matches -Unique
-        
+
         $basePath = '~/.pkgx'
 
         foreach ($package in $packages) {
@@ -48,7 +48,7 @@ class PkgxProvider : PackageProvider, IFindPackage, IGetPackage, IInstallPackage
             }
 
             $version = $resolvedVersion -replace 'v', ''
-            
+
             if ($request.IsMatch($name, $version)) {
                 $packageInfo = [PackageInfo]::new($name, $version, $request.ProviderInfo)
                 $request.WritePackage($packageInfo)
