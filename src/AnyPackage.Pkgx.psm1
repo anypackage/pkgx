@@ -77,7 +77,7 @@ class PkgxProvider : PackageProvider, IFindPackage, IGetPackage, IInstallPackage
 
         foreach ($line in $output) {
             if ($line -match '^pkgx: installed:') {
-                $package = [PackageInfo]::new($name, $version, $request.ProviderInfo)
+                $package = [PackageInfo]::new($request.Name, $version, $request.ProviderInfo)
                 $request.WritePackage($package)
                 break
             }
